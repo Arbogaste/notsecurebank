@@ -1,8 +1,7 @@
 Istruzioni:
-• Per ogni vulnerabilità fixata creare un singolo commit.
-• Il nome del commit dovrà essere nel seguente formato:
-“Fix <NumeroVulnerabilità>_<Tipologia>”
-• Facoltativo: ri-buildare e ri-deployare l’applicazione per verificare l’effettivo
+- Per ogni vulnerabilità fixata creare un singolo commit.
+- Il nome del commit dovrà essere nel seguente formato: “Fix <NumeroVulnerabilità>_<Tipologia>”
+- Facoltativo: ri-buildare e ri-deployare l’applicazione per verificare l’effettivo
 fix delle vulnerabilità. Le istruzioni per effettuare questo step sono riportate
 alla fine di questo documento.
 4. Allo scadere delle 4 ore o al termine della giornata, compilare il form al
