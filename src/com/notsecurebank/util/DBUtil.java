@@ -78,15 +78,19 @@ public class DBUtil {
 
         try {
             Connection connection = getConnection();
-            Statement statement = connection.createStatement();
+            //Statement statement = connection.createStatement();
 
             String query = "SELECT * FROM FEEDBACK";
+            PreparedStatement pst = null;
 
             if (feedbackId != Feedback.FEEDBACK_ALL) {
-                query = query + " WHERE FEEDBACK_ID = " + feedbackId + "";
+                query = query + " WHERE FEEDBACK_ID = ?";
+                pst = connection.prepareStatement(query);
+                pst.setLong(1, feedbackId);
+            }else{
+                pst = connection.prepareStatement(query);
             }
-
-            ResultSet resultSet = statement.executeQuery(query);
+            ResultSet resultSet = statempstent.executeQuery(query);
 
             while (resultSet.next()) {
                 String name = resultSet.getString("NAME");
@@ -438,9 +442,16 @@ public class DBUtil {
         LOG.debug("addAccount('" + username + "', '" + acctType + "')");
 
         try {
+            String updateQuery = "INSERT INTO ACCOUNTS (USERID,ACCOUNT_NAME,BALANCE) VALUES (?,?,0)"; 
             Connection connection = getConnection();
-            Statement statement = connection.createStatement();
-            statement.execute("INSERT INTO ACCOUNTS (USERID,ACCOUNT_NAME,BALANCE) VALUES ('" + username + "','" + acctType + "', 0)");
+            //Statement statement = connection.createStatement();
+            //statement.execute("INSERT INTO ACCOUNTS (USERID,ACCOUNT_NAME,BALANCE) VALUES ('" + username + "','" + acctType + "', 0)");
+            PreparedStatement pst = connection.preparedStatement(updateQuery);
+            //Statement statement = connection.createStatement();
+            //statement.execute("INSERT INTO ACCOUNTS (USERID,ACCOUNT_NAME,BALANCE) VALUES (?,?,0)");
+            pst.setString(1, username);
+            pst.setString(2, acctType);
+            pst.executeUpdate();
             return null;
         } catch (SQLException e) {
             LOG.error(e.toString());

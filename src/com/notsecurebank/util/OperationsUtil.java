@@ -102,9 +102,10 @@ public class OperationsUtil {
     public static String sendFeedback(String name, String email, String subject, String comments) {
         LOG.debug("sendFeedback('" + name + "', '" + email + "', '" + subject + "', '" + comments + "')");
 
-        email = StringEscapeUtils.escapeSql(email);
-        subject = StringEscapeUtils.escapeSql(subject);
-        comments = StringEscapeUtils.escapeSql(comments);
+
+        email = StringEscapeUtils.escapeJava(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeSql(email)));
+        subject = StringEscapeUtils.escapeJava(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeSql(subject)));
+        comments = StringEscapeUtils.escapeJava(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeSql(comments)));
 
         long id = DBUtil.storeFeedback(name, email, subject, comments);
         return String.valueOf(id);
