@@ -22,54 +22,62 @@ public class OperationsUtil {
 
         long debitActId = 0;
 
+        Boolean islog =ServletUtil.isLoggedin( request);
         User user = ServletUtil.getUser(request);
         String userName = user.getUsername();
 
-        try {
-            Long accountId = -1L;
-            Cookie[] cookies = request.getCookies();
-
-            Cookie notSecureBankCookie = null;
-
-            for (Cookie cookie : cookies) {
-                if (ServletUtil.NOT_SECURE_BANK_COOKIE.equals(cookie.getName())) {
-                    notSecureBankCookie = cookie;
-                    break;
-                }
-            }
-
-            Account[] cookieAccounts = null;
-            if (notSecureBankCookie == null)
-                cookieAccounts = user.getAccounts();
-            else
-                cookieAccounts = Account.fromBase64List(notSecureBankCookie.getValue());
-
+        //V9 
+        if(!islog){
+            String mess = "ERROR: user is not logged " ;
+            LOG.error(mess);
+        }else{
+                
             try {
-                accountId = Long.parseLong(accountIdString);
-            } catch (NumberFormatException e) {
-                // do nothing here. continue processing
+                Long accountId = -1L;
+                Cookie[] cookies = request.getCookies();
+
+                Cookie notSecureBankCookie = null;
+
+                for (Cookie cookie : cookies) {
+                    if (ServletUtil.NOT_SECURE_BANK_COOKIE.equals(cookie.getName())) {
+                        notSecureBankCookie = cookie;
+                        break;
+                    }
+                }
+
+                Account[] cookieAccounts = null;
+                if (notSecureBankCookie == null)
+                    cookieAccounts = user.getAccounts();
+                else
+                    cookieAccounts = Account.fromBase64List(notSecureBankCookie.getValue());
+
+                try {
+                    accountId = Long.parseLong(accountIdString);
+                } catch (NumberFormatException e) {
+                    // do nothing here. continue processing
+                    LOG.warn(e.toString());
+                }
+
+                if (accountId > 0) {
+                    for (Account account : cookieAccounts) {
+                        if (account.getAccountId() == accountId) {
+                            debitActId = account.getAccountId();
+                            break;
+                        }
+                    }
+                } else {
+                    for (Account account : cookieAccounts) {
+                        if (account.getAccountName().equalsIgnoreCase(accountIdString)) {
+                            debitActId = account.getAccountId();
+                            break;
+                        }
+                    }
+                }
+
+            } catch (Exception e) {
+                // do nothing
                 LOG.warn(e.toString());
             }
-
-            if (accountId > 0) {
-                for (Account account : cookieAccounts) {
-                    if (account.getAccountId() == accountId) {
-                        debitActId = account.getAccountId();
-                        break;
-                    }
-                }
-            } else {
-                for (Account account : cookieAccounts) {
-                    if (account.getAccountName().equalsIgnoreCase(accountIdString)) {
-                        debitActId = account.getAccountId();
-                        break;
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            // do nothing
-            LOG.warn(e.toString());
         }
 
         // we will not send an error immediately, but we need to have an
