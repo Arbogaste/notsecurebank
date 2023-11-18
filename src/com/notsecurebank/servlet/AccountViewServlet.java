@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -50,6 +49,10 @@ public class AccountViewServlet extends HttpServlet {
         if (request.getRequestURL().toString().endsWith("showTransactions")) {
             String startTime = StringEscapeUtils.escapeJava(request.getParameter("startDate"));
             String endTime = StringEscapeUtils.escapeJava(request.getParameter("endDate"));
+            /*  V2 */
+            if (!startTime.matches("\\d{4}-\\d{2}-\\d{2}")){
+                throw ServletException;
+            }
 
             LOG.info("Transactions within '" + startTime + "' and '" + endTime + "'.");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/bank/transaction.jsp?" + ((startTime != null) ? "&startTime=" + startTime : "") + ((endTime != null) ? "&endTime=" + endTime : ""));
