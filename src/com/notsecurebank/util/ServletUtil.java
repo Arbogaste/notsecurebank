@@ -32,6 +32,8 @@ public class ServletUtil {
     public static final String SESSION_ATTR_ADMIN_VALUE = "notsecurebankadmin";
     public static final String SESSION_ATTR_ADMIN_KEY = "admin";
 
+
+    
     public static HashMap<String, String> demoProperties = null;
     public static File logFile = null;
 
@@ -238,6 +240,28 @@ public class ServletUtil {
         LOG.info("True.");
         return true;
     }
+
+    
+    static public boolean isAdmin(HttpServletRequest request) {
+        LOG.info("Is Admin?");
+
+        try {
+            // Check user is logged in
+            String key = request.getSession().getAttribute(ServletUtil.SESSION_ATTR_ADMIN_KEY);
+            if (key != null && ServletUtil.SESSION_ATTR_ADMIN_VALUE.equals(key)) {
+                LOG.info("True.");
+                return true;
+            }
+        } catch (Exception e) {
+            LOG.error(e.toString());
+            LOG.info("False.");
+            return false;
+        }
+
+        LOG.info("False.");
+        return false;
+    }
+
 
     static public User getUser(HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute(ServletUtil.SESSION_ATTR_USER);

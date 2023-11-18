@@ -79,8 +79,9 @@ public class AdminAPI extends NotSecureBankAPI {
         JSONObject bodyJson = new JSONObject();
 
         // Checking if user is logged in
+        /*V6*/
 
-        if (!ServletUtil.isLoggedin(request)) {
+        if (!ServletUtil.isLoggedin(request) && !ServletUtil.isAdmin(request) ) {
             String response = "{\"loggedIn\" : \"false\"}";
             return Response.status(400).entity(response).build();
         }
