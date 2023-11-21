@@ -2,3 +2,5 @@
 history
 .class
 .vscode
+.gradle
+*.properties
