@@ -367,6 +367,7 @@ public class DBUtil {
         }
 
         String query = "SELECT * FROM TRANSACTIONS WHERE (" + acctIds.toString() + ") " + ((dateString == null) ? "" : "AND (" + dateString + ") ") + "ORDER BY DATE DESC";
+        
         ResultSet resultSet = null;
 
         try {
@@ -460,7 +461,7 @@ public class DBUtil {
     }
 
     public static String addSpecialUser(String username, String password, String firstname, String lastname) {
-        LOG.debug("addSpecialUser('" + username + "', '" + password + "', '" + firstname + "', '" + lastname + "')");
+        LOG.debug("addSpecialUser('" + username + "', '" + firstname + "', '" + lastname + "')");
 
         try {
             Connection connection = getConnection();
@@ -492,8 +493,14 @@ public class DBUtil {
 
         try {
             Connection connection = getConnection();
-            Statement statement = connection.createStatement();
-            statement.execute("UPDATE PEOPLE SET PASSWORD = '" + password + "' WHERE USER_ID = '" + username + "'");
+            String query = "UPDATE PEOPLE SET PASSWORD = ? WHERE USER_ID = ?";
+
+            //Statement statement = connection.createStatement();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, password);
+            preparedStatement.setString(2, username);
+
+            ResultSet resultSet = preparedStatement.updateQuery();
             return null;
         } catch (SQLException e) {
             LOG.error(e.toString());
